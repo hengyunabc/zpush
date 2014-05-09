@@ -1,9 +1,9 @@
 zpush
 =====
 
-Apple APNs java client.
+Apple APNs java client, based on netty4.
  
-苹果通知推送服务Java客户端。
+基于netty4实现的苹果通知推送服务Java客户端。
 
 特点：
 * 支持第三版通知推送，即command = 2。目前的绝大部分Java客户端都只支持command = 1，即第二版。
