@@ -5,6 +5,8 @@ Apple APNs java client, based on netty4.
  
 基于netty4实现的苹果通知推送服务Java客户端。
 
+默认是用JDK7来编绎的，如果想用JDK6,可以修改pom.xml里maven-compiler-plugin的source和target为1.6。
+
 特点：
 * 支持第三版通知推送，即command = 2。目前的绝大部分Java客户端都只支持command = 1，即第二版。
 * 支持SSL握手成功才返回，可以调用 pushManager.start().sync(); 等待握手成功才开始发送；
