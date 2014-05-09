@@ -9,6 +9,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import com.zpush.Notification;
 import com.zpush.NotificationBuilder;
 import com.zpush.PushManagerImpl;
+import com.zpush.Statistic;
 
 public class SpringExample {
 	public static void main(String[] args) {
@@ -30,6 +31,8 @@ public class SpringExample {
 		}
 		
 		pushManager.push(list);
-
+		
+		Statistic statistic = pushManager.getStatistic();
+		System.out.println(statistic);
 	}
 }
