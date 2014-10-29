@@ -20,7 +20,7 @@ Apple APNs java client, based on netty4.
 Example:
 
 More example under src/test/java.
-```
+```java
 public class MainExample {
 	public static void main(String[] args) throws InterruptedException {
 		Environment environment = Environment.Product;
