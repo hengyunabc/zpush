@@ -1,6 +1,11 @@
 zpush
 =====
 
+http://blog.csdn.net/hengyunabc/article/details/24325295
+
+http://blog.csdn.net/hengyunabc/article/details/25435739
+
+
 Apple APNs java client, based on netty4.
  
 基于netty4实现的苹果通知推送服务Java客户端。
