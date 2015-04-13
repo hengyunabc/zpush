@@ -7,7 +7,6 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import java.nio.charset.Charset;
 import java.util.Date;
 
-import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,24 +33,14 @@ import com.zpush.Notification;
  */
 public class NotificationEncoder extends MessageToByteEncoder<Notification> {
 	static final Logger logger = LoggerFactory.getLogger(NotificationEncoder.class);
-
-	// TODO 这个到底要不要做成static的，static的可能容易调试点，不然每个线程都有一个计数的话，可能会比较乱
-	// TODO 处理超出int范围，再重新从0开始的逻辑
-	int identifier = 0;
-
 	static final Charset utf8 = Charset.forName("UTF-8");
 
 	// 据apple的文档，这个值就是2，据其它地方看到的资料，有0和1的版本。
 	static final int COMMAND = 2;
 
-	static final int defaultExpirationDate = 0;
-
 	@Override
 	protected void encode(ChannelHandlerContext ctx, Notification notification, ByteBuf out) throws Exception {
 		logger.debug("NotificationEncoder:" + notification);
-
-//		 String data = "02000000770100205CA6A718250E1868A8EB7D8964D3E8A051B009268A3D710D0D8CC6591572890802003F7B22617073223A7B22736F756E64223A2264656661756C74222C22616C657274223A2252696E672072696E672C204E656F2E222C226261646765223A317D7D030004000000650400047FFFFFFF0500010A";
-//		 out.writeBytes(Hex.decodeHex(data.toCharArray()));
 
 		out.writeByte(COMMAND);
 		out.writeInt(0); // 预先写入frameLen
@@ -68,15 +57,13 @@ public class NotificationEncoder extends MessageToByteEncoder<Notification> {
 
 		// 写入Payload
 		out.writeByte(Item.PAYLOAD);
-		String string = "{\"aps\":{\"sound\":\"default\",\"alert\":\"Ring ring, Neo.\",\"badge\":1}}";
-		byte[] bytes = string.getBytes();
 		out.writeShort(notification.getPayload().length);
 		out.writeBytes(notification.getPayload());
 		
 		// 写入Notification identifier
 		out.writeByte(Item.NOTIFICATION_IDENTIFIER);
 		out.writeShort(4);
-		out.writeInt(identifier);
+		out.writeInt(notification.getIdentifier());
 
 		// 写入Expiration date
 		out.writeByte(Item.EXPIRATION_DATE);

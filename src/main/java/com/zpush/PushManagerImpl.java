@@ -115,6 +115,7 @@ public class PushManagerImpl implements PushManager {
 
 		if (feedbackListener != null) {
 			feedbackClient = new FeedbackClient(keystore, password, environment);
+			feedbackClient.setFeedBackListener(feedbackListener);
 			feedbackClient.start();
 		}
 

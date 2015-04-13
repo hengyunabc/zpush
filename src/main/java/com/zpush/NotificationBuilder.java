@@ -7,30 +7,35 @@ import java.util.List;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zpush.client.PushClient;
 
 /**
  * 辅助生成Notification的工具类。
- * <pre>		
-Notification notification = new NotificationBuilder()
-		.setToken(token)
-		.setBadge(1)
-		.setAlert("just test").build();
+ * 
+ * <pre>
+ * Notification notification = new NotificationBuilder().setToken(token)
+ * 		.setBadge(1).setAlert(&quot;just test&quot;).build();
  * </pre>
  *
  */
 public class NotificationBuilder {
+	static final Logger logger = LoggerFactory
+			.getLogger(NotificationBuilder.class);
+
 	byte[] token = null;
 	int priority = Notification.defaultPriority;
-	//new Date(3000, 1, 1).getTime() == 92464560000000L
+	// new Date(3000, 1, 1).getTime() == 92464560000000L
 	private Date expirationDate = new Date(92464560000000L);
 
 	JSONObject payload = new JSONObject();
 	JSONObject aps = new JSONObject();
 	String alert = null;
 	JSONObject alertObject = new JSONObject();
-	
+
 	final HashMap<String, Object> customProperties = new HashMap<String, Object>();
 	static final Charset utf8 = Charset.forName("utf-8");
 
@@ -47,9 +52,9 @@ public class NotificationBuilder {
 			throw new IllegalArgumentException("token is null!");
 		}
 		notification.setPriority(priority);
-		//TODO 这里是否把没有设置过期时间的通知都设置成无限的？
+		// TODO 这里是否把没有设置过期时间的通知都设置成无限的？
 		notification.setExpirationDate(expirationDate);
-		
+
 		/**
 		 * <pre>
 		 * 因为这里有两种格式，一种是：
@@ -71,15 +76,20 @@ public class NotificationBuilder {
 		 */
 		if (alert != null) {
 			aps.put("alert", alert);
-		}else {
+		} else {
 			aps.put("alert", alertObject);
 		}
-		
+
+		if (alert != null && alertObject != null) {
+			logger.warn("can not set alert and alertObject both!, https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW12");
+		}
+
 		payload.put("aps", aps);
-		
-		byte[] bytes = payload.toString().getBytes(utf8 );
+
+		byte[] bytes = payload.toString().getBytes(utf8);
 		if (bytes.length > MAX_PAYLOAD_SIZE) {
-			throw new IllegalArgumentException("payload.length >" + MAX_PAYLOAD_SIZE);
+			throw new IllegalArgumentException("payload.length >"
+					+ MAX_PAYLOAD_SIZE);
 		}
 		notification.setPayload(bytes);
 		return notification;
@@ -93,7 +103,7 @@ public class NotificationBuilder {
 		return this;
 	}
 
-	//TODO 这里应该可以自动去掉中间的空白字符
+	// TODO 这里应该可以自动去掉中间的空白字符
 	public NotificationBuilder setToken(String token) {
 		try {
 			byte[] hex = Hex.decodeHex(token.toCharArray());
@@ -128,7 +138,7 @@ public class NotificationBuilder {
 		aps.put("content-available", 1);
 		return this;
 	}
-	
+
 	public NotificationBuilder setAlert(String alert) {
 		this.alert = alert;
 		return this;

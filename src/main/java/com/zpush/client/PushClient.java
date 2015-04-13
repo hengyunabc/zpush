@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -89,7 +90,7 @@ public class PushClient {
 	EventLoopGroup eventLoopGroup;
 
 	// TODO 处理溢出的问题
-	int identifierSeq = 0;
+	AtomicInteger identifierSeq = new AtomicInteger(1);
 
 	RejectedListener rejectedListener = new DefaultRejectedListener();
 	
@@ -204,9 +205,9 @@ public class PushClient {
 
 		if (notification != null) {
 			// 把已发送的放到cache里
-			sentNotificationCache.add(Pair.of(identifierSeq, notification));
-			identifierSeq++;
-			channel.write(notification).addListener(new ChannelFutureListener() {
+			notification.setIdentifier(identifierSeq.getAndIncrement());
+			sentNotificationCache.add(Pair.of(notification.getIdentifier(), notification));
+			channel.writeAndFlush(notification).addListener(new ChannelFutureListener() {
 				@Override
 				public void operationComplete(ChannelFuture future) throws Exception {
 					// 只有上次成功了，才再次发送，如果上次Write失败了，则说明connection可能已经出错了。
@@ -251,6 +252,11 @@ public class PushClient {
 			channel = ctx.channel();
 		}
 
+	    @Override
+	    public void channelReadComplete(ChannelHandlerContext ctx) {
+	        ctx.flush();
+	    }
+	    
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, ErrorResponse msg) throws Exception {
 			handleErrorResponse(msg);
