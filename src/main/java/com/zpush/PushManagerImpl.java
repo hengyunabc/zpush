@@ -13,7 +13,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -32,8 +32,6 @@ import com.zpush.util.SSLUtil;
 
 public class PushManagerImpl implements PushManager {
 	static final Logger logger = LoggerFactory.getLogger(PushManagerImpl.class);
-	static Executor excutor = Executors.newCachedThreadPool();
-
 	static final int defaultQueueSize = 1024;
 	BlockingQueue<Notification> queue;
 
@@ -128,6 +126,9 @@ public class PushManagerImpl implements PushManager {
 			feedbackClient.shutdownGracefully(timeout, timeUnit);
 		}
 
+		//多线程并行退出多个pushClient
+		ExecutorService executor = Executors.newCachedThreadPool();
+		
 		final CountDownLatch latch = new CountDownLatch(pushClients.length);
 		final List<Notification> result = new ArrayList<>();
 		//尽量让所有的Client都shutdownGracefully
@@ -136,7 +137,7 @@ public class PushManagerImpl implements PushManager {
 			if (client == null) {
 				latch.countDown();
 			} else {
-				excutor.execute(new Runnable() {
+				executor.execute(new Runnable() {
 					@Override
 					public void run() {
 						Future<List<Notification>> future = client.shutdownGracefully(timeout, timeUnit);
@@ -151,6 +152,7 @@ public class PushManagerImpl implements PushManager {
 				});
 			}
 		}
+
 		try {
 			if(latch.await(timeout, TimeUnit.SECONDS)) {
 				logger.info("PushManager shutDown success");
@@ -161,6 +163,8 @@ public class PushManagerImpl implements PushManager {
 		} catch (InterruptedException e) {
 			logger.error("PushManager shutdonw error:" + e);
 			return new FailedFuture<>(GlobalEventExecutor.INSTANCE, e);
+		}finally{
+			executor.shutdown();
 		}
 	}
 
