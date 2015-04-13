@@ -1,6 +1,11 @@
 zpush
 =====
 
+http://blog.csdn.net/hengyunabc/article/details/24325295
+
+http://blog.csdn.net/hengyunabc/article/details/25435739
+
+
 Apple APNs java client, based on netty4.
  
 基于netty4实现的苹果通知推送服务Java客户端。
@@ -14,12 +19,13 @@ Apple APNs java client, based on netty4.
 * 支持配置RejectListener，即通知被Apple服务器拒绝之后的回调接口；
 * 支持配置ShutdownListener，即当shutdown时，没有发送完的消息处理的回调接口；
 * 支持发送统计信息；
-* 实现组件分离，可以利用PushClient，FeedbackClient来写一些灵活的代码。
+* 实现组件分离，可以利用PushClient，FeedbackClient来写一些灵活的代码；
+* Notification发送者可以自己定义设置发送的Queue，自己灵活处理阻塞，超时等问题。
 
 Example:
 
 More example under src/test/java.
-```
+```java
 public class MainExample {
 	public static void main(String[] args) throws InterruptedException {
 		Environment environment = Environment.Product;
