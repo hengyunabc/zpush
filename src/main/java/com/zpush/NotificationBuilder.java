@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zpush.client.PushClient;
 
 /**
  * 辅助生成Notification的工具类。
@@ -80,7 +79,7 @@ public class NotificationBuilder {
 			aps.put("alert", alertObject);
 		}
 
-		if (alert != null && alertObject != null) {
+		if (alert != null && alertObject.isEmpty()) {
 			logger.warn("can not set alert and alertObject both!, https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW12");
 		}
 

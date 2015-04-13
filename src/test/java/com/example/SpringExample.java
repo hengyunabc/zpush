@@ -13,25 +13,26 @@ import com.zpush.Statistic;
 
 public class SpringExample {
 	public static void main(String[] args) {
-		ApplicationContext ctx = new FileSystemXmlApplicationContext("classpath:/spring-test.xml");
+		ApplicationContext ctx = new FileSystemXmlApplicationContext(
+				"classpath:/spring-test.xml");
 
 		PushManagerImpl pushManager = ctx.getBean(PushManagerImpl.class);
-		String token = "5f6aa01d8e3358949b7c25d461bb78ad740f4707462c7eafbebcf74fa5ddb387";
+		String token = "0dea779dd8850531e7120631efb27a269818a637b823087bf2b2c46347a8e518";
 		Notification notification = new NotificationBuilder()
 				.setToken(token)
+				.setSound("default")
 				.setBadge(1)
-				.setPriority(5)
-				.setAlertBody("xxxxx").build();
+				.setAlert("test").build();
 
 		pushManager.push(notification);
-		
+
 		List<Notification> list = new LinkedList<>();
-		for(int i = 0; i < 100; ++i) {
+		for (int i = 0; i < 100; ++i) {
 			list.add(notification);
 		}
-		
+
 		pushManager.push(list);
-		
+
 		Statistic statistic = pushManager.getStatistic();
 		System.out.println(statistic);
 	}
