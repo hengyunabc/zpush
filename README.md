@@ -30,7 +30,7 @@ public class MainExample {
 	public static void main(String[] args) throws InterruptedException {
 		Environment environment = Environment.Product;
 		String password = "123456";
-		String keystore = "/home/hengyunabc/test/apptype/app_type_1/productAPNS.p12";
+		String keystore = "/tmp/productAPNS.p12";
 		PushManager pushManager = new PushManagerImpl(keystore, password, environment);
 		
 		//set a push queue
@@ -41,12 +41,12 @@ public class MainExample {
 		pushManager.start().sync();
 
 		//build a notification
-		String token = "5f6aa01d8e3358949b7c25d461bb78ad740f4707462c7eafbebcf74fa5ddb387";
+		String token = "0dea779dd8850531e7120631efb27a269818a637b823087bf2b2c46347a8e518";
 		Notification notification = new NotificationBuilder()
 				.setToken(token)
+				.setSound("default")
 				.setBadge(1)
-				.setPriority(5)
-				.setAlertBody("xxxxx").build();
+				.setAlert("test").build();
 
 		//put notification into the queue
 		queue.put(notification);
@@ -56,6 +56,8 @@ public class MainExample {
 		//get statistic info
 		Statistic statistic = pushManager.getStatistic();
 		System.out.println(statistic);
+		pushManager.shutdownGracefully();
+		System.out.println("pushManager.shutdownGracefully()");
 	}
 }
 ```
