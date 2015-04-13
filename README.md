@@ -1,4 +1,4 @@
-zpush
+﻿zpush
 =====
 
 http://blog.csdn.net/hengyunabc/article/details/24325295
@@ -59,3 +59,7 @@ public class MainExample {
 	}
 }
 ```
+
+##注意事项
+* 在IOS8里当消息priority为5时，客户端接收不到消息，所以不要设置这个值。默认是10。
+* 在IOS8里，要显式设置消息的sound，比如setSound("default")，否则默认是没有声音提示的。
