@@ -79,7 +79,7 @@ public class NotificationBuilder {
 			aps.put("alert", alertObject);
 		}
 
-		if (alert != null && alertObject.isEmpty()) {
+		if (alert != null && !alertObject.isEmpty()) {
 			logger.warn("can not set alert and alertObject both!, https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW12");
 		}
 
