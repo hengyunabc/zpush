@@ -30,12 +30,21 @@ public class MainExample {
 	public static void main(String[] args) throws InterruptedException {
 		Environment environment = Environment.Product;
 		String password = "123456";
-		String keystore = "/tmp/productAPNS.p12";
+		String keystore = "/home/hengyunabc/test/apptype/app_type_1/productAPNS.p12";
 		PushManager pushManager = new PushManagerImpl(keystore, password, environment);
 		
 		//set a push queue
 		BlockingQueue<Notification> queue = new LinkedBlockingQueue<Notification>(8192);
 		pushManager.setQueue(queue );
+		pushManager.setShutdownListener(new ShutdownListener() {
+			@Override
+			public void handle(List<Notification> notifications) {
+				System.out.println("PrintShutdownListener:");
+				for(Notification notification : notifications) {
+					System.out.println(notification);
+				}
+			}
+		});
 		
 		//waiting for SSL handshake success
 		pushManager.start().sync();
@@ -56,8 +65,9 @@ public class MainExample {
 		//get statistic info
 		Statistic statistic = pushManager.getStatistic();
 		System.out.println(statistic);
-		pushManager.shutdownGracefully();
-		System.out.println("pushManager.shutdownGracefully()");
+		
+		pushManager.shudownWithListener();
+		System.out.println("pushManager.shudownWithListener()");
 	}
 }
 ```
