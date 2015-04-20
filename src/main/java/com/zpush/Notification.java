@@ -1,5 +1,7 @@
 package com.zpush;
 
+import io.netty.util.CharsetUtil;
+
 import java.util.Date;
 
 import com.alibaba.fastjson.JSON;
@@ -61,6 +63,10 @@ public class Notification {
 
 	public void setIdentifier(int identifier) {
 		this.identifier = identifier;
+	}
+	
+	public String payloadJSONString(){
+		return new String(payload, CharsetUtil.UTF_8);
 	}
 
 	public String toString() {

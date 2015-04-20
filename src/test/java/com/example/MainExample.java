@@ -42,8 +42,11 @@ public class MainExample {
 				.setToken(token)
 				.setSound("default")
 				.setBadge(1)
+				.setUserProperty("hello", "world")
 				.setAlert("test").build();
 
+		System.err.println(notification.payloadJSONString());
+		
 		//put notification into the queue
 		queue.put(notification);
 		

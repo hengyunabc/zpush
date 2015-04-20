@@ -82,7 +82,7 @@ public class PushClient {
 	// TODO 也许这里应该用identifier进行排序，这样可以防止有些消息的接收顺序颠倒了，不过这种情况应该是比较少的。
 	LinkedBlockingQueue<Notification> reSendNotifications = new LinkedBlockingQueue<Notification>();
 
-	SentNotificationCache sentNotificationCache = new SentNotificationCache(1024);
+	SentNotificationCache sentNotificationCache = new SentNotificationCache(8192);
 
 	SSLContext sslContext;
 

@@ -32,7 +32,7 @@ import com.zpush.util.SSLUtil;
 
 public class PushManagerImpl implements PushManager {
 	static final Logger logger = LoggerFactory.getLogger(PushManagerImpl.class);
-	static final int defaultQueueSize = 1024;
+	static final int defaultQueueSize = 8192;
 	BlockingQueue<Notification> queue;
 
 	/**

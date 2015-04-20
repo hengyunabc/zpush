@@ -15,7 +15,7 @@ import org.apache.commons.lang3.tuple.Pair;
  * 
  */
 public class SentNotificationCache {
-	static final int MAX_SIZE = 1024;
+	static final int MAX_SIZE = 8192;
 	Pair<Integer, Notification>[] pairArray;
 	HashMap<Integer, Notification> notificationMap;
 	
