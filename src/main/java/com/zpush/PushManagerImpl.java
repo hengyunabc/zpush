@@ -87,7 +87,7 @@ public class PushManagerImpl implements PushManager {
 
 		final DefaultPromise<Object> promise = new DefaultPromise<>(GlobalEventExecutor.INSTANCE);
 
-		//client失败的计数
+		// client失败的计数
 		final AtomicInteger failCount = new AtomicInteger(0);
 		for (int i = 0; i < pushClients.length; ++i) {
 			pushClients[i].start().addListener(new FutureListener<Object>() {
@@ -99,7 +99,7 @@ public class PushManagerImpl implements PushManager {
 						if (!promise.isDone()) {
 							if (future.isSuccess()) {
 								promise.setSuccess(new Object());
-							}else {
+							} else {
 								failCount.incrementAndGet();
 								if (failCount.intValue() >= pushClients.length) {
 									promise.setFailure(future.cause());
@@ -126,12 +126,12 @@ public class PushManagerImpl implements PushManager {
 			feedbackClient.shutdownGracefully(timeout, timeUnit);
 		}
 
-		//多线程并行退出多个pushClient
+		// 多线程并行退出多个pushClient
 		ExecutorService executor = Executors.newCachedThreadPool();
-		
+
 		final CountDownLatch latch = new CountDownLatch(pushClients.length);
 		final List<Notification> result = new ArrayList<>();
-		//尽量让所有的Client都shutdownGracefully
+		// 尽量让所有的Client都shutdownGracefully
 		for (int i = 0; i < pushClients.length; i++) {
 			final PushClient client = pushClients[i];
 			if (client == null) {
@@ -154,16 +154,16 @@ public class PushManagerImpl implements PushManager {
 		}
 
 		try {
-			if(latch.await(timeout, TimeUnit.SECONDS)) {
+			if (latch.await(timeout, TimeUnit.SECONDS)) {
 				logger.info("PushManager shutDown success");
 				return new SucceededFuture<>(GlobalEventExecutor.INSTANCE, result);
-			}else {
+			} else {
 				return new FailedFuture<>(GlobalEventExecutor.INSTANCE, new TimeoutException());
 			}
 		} catch (InterruptedException e) {
 			logger.error("PushManager shutdonw error:" + e);
 			return new FailedFuture<>(GlobalEventExecutor.INSTANCE, e);
-		}finally{
+		} finally {
 			executor.shutdown();
 		}
 	}
@@ -245,8 +245,8 @@ public class PushManagerImpl implements PushManager {
 	public Statistic getStatistic() {
 		Statistic statistic = new Statistic();
 		if (pushClients != null) {
-			//把PushClient里的统计信息加到总的统计里去。其中queueSize不会加上，因为所有的client共享一个queue。
-			for(PushClient client : pushClients) {
+			// 把PushClient里的统计信息加到总的统计里去。其中queueSize不会加上，因为所有的client共享一个queue。
+			for (PushClient client : pushClients) {
 				if (client != null) {
 					Statistic clientStatistic = client.getStatistic();
 					statistic.addAndGetWritedCount(clientStatistic.getWritedCount());
@@ -259,7 +259,7 @@ public class PushManagerImpl implements PushManager {
 		statistic.setQueueSize(queue.size());
 		return statistic;
 	}
-	
+
 	public String getKeystore() {
 		return keystore;
 	}
@@ -276,6 +276,12 @@ public class PushManagerImpl implements PushManager {
 		this.password = password;
 	}
 
+	@Override
+	public ShutdownListener getShutdownListener() {
+		return shutdownListener;
+	}
+
+	@Override
 	public void setShutdownListener(ShutdownListener shutdownListener) {
 		this.shutdownListener = shutdownListener;
 	}
@@ -287,4 +293,5 @@ public class PushManagerImpl implements PushManager {
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
 	}
+
 }

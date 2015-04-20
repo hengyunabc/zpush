@@ -38,6 +38,9 @@ public interface PushManager {
 	public void setRejectedListener(RejectedListener listener);
 	public RejectedListener getRejectedListener();
 	
+	public void setShutdownListener(ShutdownListener shutdownListener);
+	public ShutdownListener getShutdownListener();
+	
 	public BlockingQueue<Notification> getQueue();
 	public void setQueue(BlockingQueue<Notification> queue);
 	
